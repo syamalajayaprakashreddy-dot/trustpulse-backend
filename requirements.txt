@@ -1,0 +1,8 @@
+django>=4.2
+djangorestframework>=3.14
+django-cors-headers>=4.0
+requests>=2.31
+beautifulsoup4>=4.12
+textblob>=0.17
+python-whois>=0.8
+gunicorn>=21.0
