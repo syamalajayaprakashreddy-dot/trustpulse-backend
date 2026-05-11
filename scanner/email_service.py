@@ -1,0 +1,177 @@
+import os
+import json
+import requests
+from datetime import datetime
+
+
+def send_pdf_report_email(customer_email, scan_data, stripe_session_id=None):
+    """
+    Send PDF report to customer after payment.
+    Uses SendGrid free tier (100 emails/day free).
+    """
+    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+
+    if not sendgrid_key:
+        print(f"No SendGrid key — would send report to {customer_email}")
+        return False
+
+    # Build HTML report content
+    score = scan_data.get('score', 0)
+    grade = scan_data.get('grade', 'Unknown')
+    url = scan_data.get('url', '')
+    checks = scan_data.get('checks', [])
+    issues = scan_data.get('issues', [])
+    date = datetime.now().strftime('%d %B %Y')
+    score_color = '#1D9E75' if score >= 75 else '#EF9F27' if score >= 50 else '#E24B4A'
+
+    checks_html = ''.join([
+        f"""<tr>
+            <td style="padding:8px;border-bottom:1px solid #eee">
+                {'✅' if c['status']=='pass' else '❌' if c['status']=='fail' else '⚠️'} {c['title']}
+            </td>
+            <td style="padding:8px;border-bottom:1px solid #eee;color:#5A5A60">{c['detail']}</td>
+        </tr>"""
+        for c in checks
+    ])
+
+    issues_html = ''.join([
+        f"""<div style="padding:12px;margin-bottom:8px;border-radius:8px;
+            background:{'#FCEBEB' if i['severity']=='high' else '#FAEEDA' if i['severity']=='medium' else '#E1F5EE'}">
+            <strong style="color:{'#A32D2D' if i['severity']=='high' else '#854F0B' if i['severity']=='medium' else '#0F6E56'}">
+                {i['severity'].upper()} — {i['title']}
+            </strong>
+            <p style="margin-top:4px;font-size:13px;color:#5A5A60">{i['detail']}</p>
+        </div>"""
+        for i in issues
+    ])
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#18181A">
+
+        <div style="background:#1D9E75;padding:20px;border-radius:12px 12px 0 0;text-align:center">
+            <h1 style="color:#fff;margin:0;font-size:22px">🛡️ TrustPulse Report</h1>
+            <p style="color:rgba(255,255,255,0.8);margin:4px 0 0;font-size:13px">{date}</p>
+        </div>
+
+        <div style="background:#F3F2EE;padding:16px;border-radius:0 0 12px 12px;margin-bottom:20px">
+            <p style="margin:0;font-size:13px;color:#5A5A60">Website scanned: <strong>{url}</strong></p>
+        </div>
+
+        <div style="background:#F3F2EE;border-radius:12px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px">
+            <div style="width:80px;height:80px;border-radius:50%;border:3px solid {score_color};
+                display:inline-flex;align-items:center;justify-content:center;background:#fff;
+                font-size:24px;font-weight:700;color:{score_color};flex-shrink:0">
+                {score}
+            </div>
+            <div style="display:inline-block;vertical-align:top;margin-left:16px">
+                <h2 style="margin:0 0 4px;font-size:18px">{grade}</h2>
+                <p style="margin:0;font-size:13px;color:#5A5A60">{scan_data.get('grade_desc', '')}</p>
+                <div style="margin-top:8px;font-size:12px">
+                    <span style="color:#1D9E75;margin-right:12px">✅ {scan_data.get('passed_count',0)} passed</span>
+                    <span style="color:#E24B4A;margin-right:12px">❌ {scan_data.get('issues_count',0)} issues</span>
+                    <span style="color:#EF9F27">⚠️ {scan_data.get('warnings_count',0)} warnings</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size:16px;margin-bottom:12px">Trust Checks Breakdown</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px">
+            <thead>
+                <tr style="background:#F3F2EE">
+                    <th style="padding:8px;text-align:left;color:#5A5A60">Check</th>
+                    <th style="padding:8px;text-align:left;color:#5A5A60">Finding</th>
+                </tr>
+            </thead>
+            <tbody>{checks_html}</tbody>
+        </table>
+
+        <h3 style="font-size:16px;margin-bottom:12px">Issues Found</h3>
+        {issues_html if issues_html else '<p style="color:#1D9E75">✅ No major issues found!</p>'}
+
+        <div style="background:#E1F5EE;border-radius:12px;padding:16px;margin-top:20px">
+            <h3 style="font-size:14px;color:#0F6E56;margin:0 0 8px">Next steps</h3>
+            <p style="font-size:13px;color:#0F6E56;margin:0;line-height:1.6">
+                Fix the high severity issues first — these have the biggest impact on your trust score
+                and customer conversions. Reply to this email if you need help implementing any fixes.
+            </p>
+        </div>
+
+        <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #eee">
+            <p style="font-size:12px;color:#9B9BA0">
+                Generated by TrustPulse · trustpulse-backend.vercel.app<br>
+                Need help? Reply to this email.
+            </p>
+        </div>
+
+    </body>
+    </html>
+    """
+
+    # Send via SendGrid API
+    payload = {
+        "personalizations": [{"to": [{"email": customer_email}]}],
+        "from": {"email": "reports@trustpulse.io", "name": "TrustPulse"},
+        "subject": f"Your TrustPulse Report — Score: {score}/100 ({grade})",
+        "content": [{"type": "text/html", "value": html_content}]
+    }
+
+    response = requests.post(
+        "https://api.sendgrid.com/v3/mail/send",
+        headers={
+            "Authorization": f"Bearer {sendgrid_key}",
+            "Content-Type": "application/json"
+        },
+        json=payload,
+        timeout=10
+    )
+
+    return response.status_code in (200, 202)
+
+
+def send_pro_access_email(customer_email):
+    """Send Pro access code to new subscriber."""
+    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+    if not sendgrid_key:
+        print(f"Would send Pro access code to {customer_email}")
+        return False
+
+    html_content = """
+    <div style="font-family:-apple-system,sans-serif;max-width:500px;margin:0 auto;padding:20px">
+        <div style="background:#1D9E75;padding:20px;border-radius:12px;text-align:center;margin-bottom:20px">
+            <h1 style="color:#fff;margin:0">🛡️ Welcome to TrustPulse Pro!</h1>
+        </div>
+        <p>Thanks for upgrading! Here's your Pro access code:</p>
+        <div style="background:#F3F2EE;border-radius:12px;padding:20px;text-align:center;margin:16px 0">
+            <div style="font-size:28px;font-weight:700;color:#1D9E75;letter-spacing:4px">TRUST2025</div>
+            <p style="font-size:12px;color:#5A5A60;margin:8px 0 0">Enter this code on the scanner page to unlock full access</p>
+        </div>
+        <p style="font-size:13px;color:#5A5A60">
+            Visit <a href="https://trustpulse-backend.vercel.app" style="color:#1D9E75">trustpulse-backend.vercel.app</a>,
+            scan any website, and enter your code to unlock the full report.
+        </p>
+        <p style="font-size:12px;color:#9B9BA0;margin-top:20px">
+            Questions? Reply to this email. We're here to help!
+        </p>
+    </div>
+    """
+
+    payload = {
+        "personalizations": [{"to": [{"email": customer_email}]}],
+        "from": {"email": "hello@trustpulse.io", "name": "TrustPulse"},
+        "subject": "Welcome to TrustPulse Pro — Your Access Code Inside 🛡️",
+        "content": [{"type": "text/html", "value": html_content}]
+    }
+
+    response = requests.post(
+        "https://api.sendgrid.com/v3/mail/send",
+        headers={
+            "Authorization": f"Bearer {sendgrid_key}",
+            "Content-Type": "application/json"
+        },
+        json=payload,
+        timeout=10
+    )
+
+    return response.status_code in (200, 202)
