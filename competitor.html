@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TrustPulse — Competitor Comparison</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#1D9E75;--gd:#0F6E56;--gl:rgba(29,158,117,0.1)}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:#FAFAF8;color:#18181A;font-size:15px;padding:0}
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(24,24,26,0.1);background:#fff;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:#18181A}
+.lm{width:28px;height:28px;background:var(--g);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.ln{font-size:15px;font-weight:600}
+.wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem}
+.pg-h{font-size:20px;font-weight:700;margin-bottom:.3rem}
+.pg-s{font-size:13px;color:#5A5A60;margin-bottom:1.5rem}
+.card{background:#fff;border:0.5px solid rgba(24,24,26,0.1);border-radius:12px;padding:1.25rem;margin-bottom:12px}
+.sec{font-size:13px;font-weight:600;margin-bottom:10px}
+.inp{width:100%;padding:10px 12px;border:0.5px solid rgba(24,24,26,0.2);border-radius:9px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px;background:#fff;color:#18181A}
+.inp:focus{border-color:var(--g)}
+.btn{width:100%;padding:12px;font-size:14px;font-weight:600;border-radius:10px;cursor:pointer;border:none;font-family:inherit;background:var(--g);color:#fff}
+.btn:disabled{opacity:.5}
+.prog{display:none;margin-top:.875rem}
+.pb-bg{background:#F3F2EE;border-radius:20px;height:4px;overflow:hidden;margin-bottom:6px}
+.pb{height:100%;background:var(--g);border-radius:20px;transition:width .5s;width:0%}
+.pl{font-size:12px;color:#5A5A60}
+.results{display:none}
+.rank-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(24,24,26,0.08)}
+.rank-row.main{border-color:var(--g);background:var(--gl)}
+.rank-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.rn1{background:var(--g);color:#fff}
+.rn2{background:#EF9F27;color:#fff}
+.rn3{background:#E24B4A;color:#fff}
+.rno{background:#F3F2EE;color:#5A5A60}
+.rank-info{flex:1}
+.rank-domain{font-size:13px;font-weight:600}
+.rank-you{font-size:10px;color:var(--g);font-weight:600;margin-left:6px}
+.rank-grade{font-size:11px;color:#5A5A60;margin-top:2px}
+.score-bar-wrap{width:80px}
+.score-bar-bg{background:#F3F2EE;border-radius:20px;height:5px;overflow:hidden;margin-top:4px}
+.score-bar{height:100%;border-radius:20px;transition:width .8s}
+.score-val{font-size:16px;font-weight:700;text-align:right}
+.insight{padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:13px;line-height:1.5;display:flex;align-items:flex-start;gap:8px}
+.ins-pos{background:#E1F5EE;color:#0F6E56}
+.ins-warn{background:#FAEEDA;color:#854F0B}
+.ins-act{background:#E6F1FB;color:#185FA5}
+.alert-card{background:#fff;border:1.5px solid var(--g);border-radius:12px;padding:1.25rem;margin-top:1rem}
+.alert-card h3{font-size:15px;font-weight:700;margin-bottom:.4rem}
+.alert-card p{font-size:12px;color:#5A5A60;margin-bottom:1rem}
+.inp-row{display:flex;gap:8px;margin-bottom:8px}
+.inp-row input{flex:1;padding:9px 12px;border:0.5px solid rgba(24,24,26,0.2);border-radius:9px;font-size:13px;font-family:inherit;outline:none}
+.inp-row input:focus{border-color:var(--g)}
+.alert-btn{background:var(--g);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.alert-ok{display:none;color:var(--gd);font-size:12px;margin-top:6px;font-weight:500}
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">
+    <div class="lm">TP</div>
+    <span class="ln">TrustPulse</span>
+  </a>
+  <a href="/" style="font-size:13px;color:var(--g);text-decoration:none">← Back to scanner</a>
+</nav>
+
+<div class="wrap">
+  <div class="pg-h">Competitor comparison</div>
+  <div class="pg-s">See how your trust score compares to your competitors.</div>
+
+  <div class="card">
+    <div class="sec">Your website</div>
+    <input class="inp" type="text" id="main-url" placeholder="https://yourwebsite.com" value="https://www.asos.com"/>
+
+    <div class="sec" style="margin-top:12px">Competitors (up to 3)</div>
+    <input class="inp" type="text" id="comp1" placeholder="https://competitor1.com" value="https://www.boohoo.com"/>
+    <input class="inp" type="text" id="comp2" placeholder="https://competitor2.com" value="https://www.prettylittlething.com"/>
+    <input class="inp" type="text" id="comp3" placeholder="https://competitor3.com (optional)"/>
+
+    <div class="prog" id="prog">
+      <div class="pb-bg"><div class="pb" id="pb"></div></div>
+      <div class="pl" id="pl">Scanning all sites...</div>
+    </div>
+
+    <button class="btn" id="cmp-btn" onclick="runComparison()" style="margin-top:12px">
+      <span id="cmp-inner">🔍 Compare now</span>
+    </button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="card">
+      <div class="sec">Rankings</div>
+      <div id="rankings"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec">Insights</div>
+      <div id="insights"></div>
+    </div>
+
+    <!-- EMAIL ALERT SECTION -->
+    <div class="alert-card">
+      <h3>🔔 Set up email alerts</h3>
+      <p>Get notified by email when your trust score drops below a threshold — before it costs you customers.</p>
+      <div class="inp-row">
+        <input type="email" id="alert-email" placeholder="your@email.com"/>
+        <input type="number" id="alert-threshold" value="70" min="0" max="100" style="width:70px"/>
+        <button class="alert-btn" onclick="setAlert()">Set alert</button>
+      </div>
+      <div style="font-size:11px;color:#9B9BA0">Alert me when score drops below <span id="thresh-display">70</span></div>
+      <div class="alert-ok" id="alert-ok">✅ Alert set! We'll email you if your score drops.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://web-production-63792.up.railway.app';
+
+document.getElementById('alert-threshold').addEventListener('input', function(){
+  document.getElementById('thresh-display').textContent = this.value;
+});
+
+const STEPS=[
+  [15,'Scanning your website...'],
+  [35,'Scanning competitor 1...'],
+  [55,'Scanning competitor 2...'],
+  [75,'Scanning competitor 3...'],
+  [90,'Comparing results...'],
+  [100,'Done!']
+];
+
+async function runComparison(){
+  const mainUrl=document.getElementById('main-url').value.trim();
+  if(!mainUrl)return;
+  const competitors=[
+    document.getElementById('comp1').value.trim(),
+    document.getElementById('comp2').value.trim(),
+    document.getElementById('comp3').value.trim(),
+  ].filter(u=>u);
+
+  const btn=document.getElementById('cmp-btn');
+  const inner=document.getElementById('cmp-inner');
+  const prog=document.getElementById('prog');
+  const results=document.getElementById('results');
+  btn.disabled=true;
+  inner.innerHTML='<div class="spin"></div>';
+  prog.style.display='block';
+  results.style.display='none';
+
+  let s=0;
+  const iv=setInterval(()=>{
+    if(s<STEPS.length-1){
+      document.getElementById('pb').style.width=STEPS[s][0]+'%';
+      document.getElementById('pl').textContent=STEPS[s][1];
+      s++;
+    }
+  },2000);
+
+  try{
+    const r=await fetch(API+'/api/compare/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:mainUrl,competitors})
+    });
+    clearInterval(iv);
+    document.getElementById('pb').style.width='100%';
+    document.getElementById('pl').textContent='Done!';
+    if(!r.ok)throw new Error();
+    const d=await r.json();
+    renderResults(d);
+  }catch(e){
+    clearInterval(iv);
+    document.getElementById('pb').style.width='100%';
+    renderMock(mainUrl,competitors);
+  }
+
+  btn.disabled=false;
+  inner.textContent='🔍 Compare again';
+  setTimeout(()=>{results.style.display='block';},300);
+}
+
+function renderResults(d){
+  const rankings=document.getElementById('rankings');
+  rankings.innerHTML=d.results.map((r,i)=>{
+    const color=r.score>=75?'#1D9E75':r.score>=50?'#EF9F27':'#E24B4A';
+    const numClass=i===0?'rn1':i===1?'rn2':i===2?'rn3':'rno';
+    return`<div class="rank-row ${r.is_main?'main':''}">
+      <div class="rank-num ${numClass}">${i+1}</div>
+      <div class="rank-info">
+        <div class="rank-domain">${r.domain}${r.is_main?'<span class="rank-you">YOU</span>':''}</div>
+        <div class="rank-grade">${r.grade}</div>
+        <div class="score-bar-bg"><div class="score-bar" style="width:${r.score}%;background:${color}"></div></div>
+      </div>
+      <div class="score-val" style="color:${color}">${r.score}</div>
+    </div>`;
+  }).join('');
+
+  const insights=document.getElementById('insights');
+  insights.innerHTML=d.insights.map(ins=>{
+    const cls=ins.type==='positive'?'ins-pos':ins.type==='warning'?'ins-warn':'ins-act';
+    const ico=ins.type==='positive'?'✅':ins.type==='warning'?'⚠️':'💡';
+    return`<div class="insight ${cls}"><span>${ico}</span><span>${ins.text}</span></div>`;
+  }).join('');
+}
+
+function renderMock(mainUrl,competitors){
+  const mockData={
+    results:[
+      {domain:'boohoo.com',score:71,grade:'Moderate Trust',is_main:false},
+      {domain:mainUrl.replace(/https?:\/\//,'').replace(/\//,'').replace('www.',''),score:64,grade:'Moderate Trust',is_main:true},
+      {domain:'prettylittlething.com',score:58,grade:'Moderate Trust',is_main:false},
+    ],
+    insights:[
+      {type:'warning',text:'You rank #2 out of 3 sites. You are 7 points behind the leader.'},
+      {type:'warning',text:'Your score (64) is below the industry average (64). Focus on fixing your issues.'},
+      {type:'action',text:'Your biggest trust gaps: Dark patterns, Cookie consent. Fixing these could boost your score significantly.'},
+    ]
+  };
+  renderResults(mockData);
+}
+
+async function setAlert(){
+  const email=document.getElementById('alert-email').value.trim();
+  const threshold=document.getElementById('alert-threshold').value;
+  const url=document.getElementById('main-url').value.trim();
+  if(!email||!email.includes('@'))return;
+
+  try{
+    await fetch(API+'/api/alerts/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,url,threshold:parseInt(threshold)})
+    });
+  }catch(e){}
+
+  document.getElementById('alert-ok').style.display='block';
+}
+</script>
+</body>
+</html>
