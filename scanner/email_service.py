@@ -112,7 +112,7 @@ def send_pdf_report_email(customer_email, scan_data, stripe_session_id=None):
     # Send via SendGrid API
     payload = {
         "personalizations": [{"to": [{"email": customer_email}]}],
-        "from": {"email": "reports@trustpulse.io", "name": "TrustPulse"},
+        "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
         "subject": f"Your TrustPulse Report — Score: {score}/100 ({grade})",
         "content": [{"type": "text/html", "value": html_content}]
     }
@@ -159,7 +159,7 @@ def send_pro_access_email(customer_email):
 
     payload = {
         "personalizations": [{"to": [{"email": customer_email}]}],
-        "from": {"email": "hello@trustpulse.io", "name": "TrustPulse"},
+        "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
         "subject": "Welcome to TrustPulse Pro — Your Access Code Inside 🛡️",
         "content": [{"type": "text/html", "value": html_content}]
     }
