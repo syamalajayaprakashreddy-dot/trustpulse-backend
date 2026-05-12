@@ -138,8 +138,11 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
     <div class="badge"><span class="dot"></span> Free beta — try it now</div>
     <h1>Your brand's <span>trust score</span>,<br>in real time</h1>
     <p>AI-powered scanner that detects dark patterns, compliance issues, and reputation risks before they cost you customers.</p>
+    <div style="display:flex;gap:8px;max-width:400px;margin:0 auto 1.5rem;padding:0 1rem">
+      <input type="text" id="hero-url" placeholder="https://yoursite.com" style="flex:1;padding:10px 12px;border:0.5px solid rgba(24,24,26,0.2);border-radius:9px;font-size:13px;outline:none;font-family:inherit"/>
+      <button class="btn btn-g" onclick="heroScan()">Scan free</button>
+    </div>
     <div class="hbtns">
-      <button class="btn btn-g" onclick="show('scanner')">Scan your website free</button>
       <button class="btn btn-o" onclick="show('pricing')">View pricing</button>
     </div>
   </div>
@@ -151,19 +154,10 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
   <div class="feats">
     <div class="feat"><div class="fi fig">🛡️</div><div><h3>Trust score engine</h3><p>Real-time score based on 7 trust signals — like a credit score for your brand.</p></div></div>
     <div class="feat"><div class="fi fib">👁️</div><div><h3>Dark pattern detector</h3><p>Flags fake urgency, hidden fees, pre-ticked boxes and misleading language.</p></div></div>
-    <div class="feat"><div class="fi fia">🔔</div><div><h3>Reputation autopilot</h3><p>Monitor reviews 24/7 across Google, Trustpilot, and social media.</p></div></div>
+    <div class="feat"><div class="fi fia">📋</div><div><h3>GDPR compliance check</h3><p>Detects pre-ticked boxes, missing cookie notices and privacy policy issues.</p></div></div>
     <div class="feat"><div class="fi fir">📊</div><div><h3>Competitor benchmarking</h3><p>See how your trust score compares to competitors and find the gaps.</p></div></div>
   </div>
-  <div class="wl">
-    <h2>Join the waitlist</h2>
-    <p>500+ brands already signed up. Get early access and 3 months free.</p>
-    <div class="wl-row">
-      <input type="email" id="wl-e" placeholder="your@email.com"/>
-      <button onclick="joinWL()">Join →</button>
-    </div>
-    <div class="wl-ok" id="wl-ok">✓ You're on the list!</div>
-  </div>
-  <footer>© 2025 TrustPulse · <a href="#" onclick="show('scanner')" style="color:var(--g);text-decoration:none">Try the scanner free →</a></footer>
+  <footer>© 2026 TrustPulse · <a href="#" onclick="show('scanner')" style="color:var(--g);text-decoration:none">Try the scanner free →</a></footer>
 </div>
 
 <!-- PRICING -->
@@ -370,7 +364,8 @@ function unlockPro(){
 
 function getMock(url){return{url,score:64,grade:'Moderate Trust',grade_desc:'Several issues detected that may be costing you customers.',checks:[{title:'SSL certificate',status:'pass',detail:'Valid and up to date.'},{title:'Privacy policy',status:'pass',detail:'Found and accessible.'},{title:'Dark patterns',status:'fail',detail:'Countdown timer detected.'},{title:'Cookie consent',status:'fail',detail:'Pre-ticked boxes — GDPR issue.'},{title:'Contact info',status:'warn',detail:'Only one method found.'},{title:'Page tone',status:'pass',detail:'Positive tone detected.'},{title:'Returns policy',status:'fail',detail:'Not found on this page.'}],issues:[{severity:'high',title:'Fake countdown timer',detail:'Timer resets on page refresh — dark pattern and possible UK law violation.'},{severity:'high',title:'Pre-ticked cookie boxes',detail:'Violates GDPR and damages consumer trust.'},{severity:'medium',title:'No returns policy',detail:'Required by UK law and builds consumer confidence.'}],passed_count:3,issues_count:3,warnings_count:1};}
 
-function scanB(url){show('scanner');document.getElementById('scan-url').value=url;setTimeout(runScan,300);}
+function heroScan(){const url=document.getElementById('hero-url').value.trim();if(url){show('scanner');document.getElementById('scan-url').value=url;setTimeout(runScan,300);}}
+    function scanB(url){show('scanner');document.getElementById('scan-url').value=url;setTimeout(runScan,300);}
 </script>
 </body>
 </html>
