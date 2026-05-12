@@ -114,10 +114,7 @@ def send_pdf_report_email(customer_email, scan_data, stripe_session_id=None):
         "personalizations": [{"to": [{"email": customer_email}]}],
         "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
         "subject": f"Your TrustPulse Report — Score: {score}/100 ({grade})",
-        "content": [
-    {"type": "text/plain", "value": "Welcome to TrustPulse Pro!\n\nYour access code is: TRUST2025\n\nVisit trustpulse-backend.vercel.app to use it.\n\nQuestions? Reply to this email."},
-    {"type": "text/html", "value": html_content}
-]
+        "content": [{"type": "text/html", "value": html_content}]
     }
 
     response = requests.post(
@@ -164,7 +161,10 @@ def send_pro_access_email(customer_email):
         "personalizations": [{"to": [{"email": customer_email}]}],
         "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
         "subject": "Welcome to TrustPulse Pro — Your Access Code Inside 🛡️",
-        "content": [{"type": "text/html", "value": html_content}]
+        "content": [
+    {"type": "text/plain", "value": "Welcome to TrustPulse Pro!\n\nYour access code is: TRUST2025\n\nVisit trustpulse-backend.vercel.app to use it.\n\nQuestions? Reply to this email."},
+    {"type": "text/html", "value": html_content}
+]
     }
 
     response = requests.post(
