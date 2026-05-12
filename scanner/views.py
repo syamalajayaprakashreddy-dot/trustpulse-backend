@@ -136,8 +136,9 @@ def stripe_webhook(request):
             send_pdf_report_email(customer_email, scan_data)
 
     return HttpResponse(status=200)
-    
-    @api_view(['GET'])
+
+
+@api_view(['GET'])
 def test_email(request):
     from .email_service import send_pro_access_email
     result = send_pro_access_email('syamalajayaprakashreddy@gmail.com')
