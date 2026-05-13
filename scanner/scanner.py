@@ -41,12 +41,12 @@ def check_privacy_policy(soup):
     if soup is None:
         return {'id':'privacy','title':'Privacy policy','status':'warn','detail':'Could not scan page.','points':5}
     text = soup.get_text().lower()
-    links = [a.get_text().lower() for a in soup.find_all('a')]
-    all_text = text + ' '.join(links)
-    if 'privacy policy' in all_text or 'privacy notice' in all_text:
+    links_text = [a.get_text().lower() for a in soup.find_all('a')]
+    links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
+    all_text = text + ' '.join(links_text) + ' '.join(links_href)
+    if any(p in all_text for p in ['privacy policy','privacy notice','privacy-policy','/privacy']):
         return {'id':'privacy','title':'Privacy policy','status':'pass','detail':'Privacy policy link found.','points':10}
     return {'id':'privacy','title':'Privacy policy','status':'fail','detail':'No privacy policy found. Required under UK GDPR.','points':0}
-
 
 def check_dark_patterns(soup, html):
     if soup is None or html is None:
@@ -71,14 +71,35 @@ def check_dark_patterns(soup, html):
 def check_cookie_consent(soup, html):
     if soup is None:
         return {'id':'cookies','title':'Cookie consent','status':'warn','detail':'Could not scan page.','points':5}
+
     preticked = soup.find_all('input', {'type':'checkbox','checked':True})
-    cookie_text = 'cookie' in soup.get_text().lower()
     if preticked:
         return {'id':'cookies','title':'Cookie consent','status':'fail','detail':f'{len(preticked)} pre-ticked checkbox(es) found. Violates GDPR.','points':0}
-    if cookie_text:
+
+    # Check visible text
+    full_text = soup.get_text().lower()
+    # Check href links
+    links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
+    # Check raw HTML for JS cookie scripts
+    html_lower = html.lower() if html else ''
+
+    cookie_signals = [
+        'cookie' in full_text,
+        any('cookie' in h for h in links_href),
+        'cookieconsent' in html_lower,
+        'cookie-consent' in html_lower,
+        'cookie_consent' in html_lower,
+        'cookiebot' in html_lower,
+        'onetrust' in html_lower,
+        'gdpr' in html_lower,
+        'cc_cookie' in html_lower,
+        'cookie-policy' in html_lower,
+        '/cookie' in html_lower,
+    ]
+
+    if any(cookie_signals):
         return {'id':'cookies','title':'Cookie consent','status':'pass','detail':'Cookie consent notice found.','points':10}
     return {'id':'cookies','title':'Cookie consent','status':'warn','detail':'No cookie consent notice detected.','points':5}
-
 
 def check_contact_info(soup):
     if soup is None:
@@ -111,11 +132,18 @@ def check_sentiment(soup):
 def check_returns_policy(soup):
     if soup is None:
         return {'id':'returns','title':'Returns policy','status':'warn','detail':'Could not scan page.','points':5}
+
     text = soup.get_text().lower()
-    if any(p in text for p in ['return policy','returns policy','refund policy','money back','30-day','14 day return']):
+    links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
+    all_text = text + ' '.join(links_href)
+
+    if any(p in all_text for p in [
+        'return policy','returns policy','refund policy',
+        'money back','30-day','14 day return',
+        '/returns','/refund','refund-policy','returns-policy'
+    ]):
         return {'id':'returns','title':'Returns policy','status':'pass','detail':'Returns policy found.','points':10}
     return {'id':'returns','title':'Returns policy','status':'fail','detail':'No returns policy found. Required by UK law.','points':0}
-
 
 def run_full_scan(url):
     if not url.startswith('http'):
