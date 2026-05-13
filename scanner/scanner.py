@@ -104,17 +104,35 @@ def check_cookie_consent(soup, html):
 def check_contact_info(soup):
     if soup is None:
         return {'id':'contact','title':'Contact information','status':'warn','detail':'Could not scan page.','points':5}
+
     text = soup.get_text().lower()
+    links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
+    links_text = [a.get_text().lower() for a in soup.find_all('a')]
+    all_text = text + ' '.join(links_href) + ' '.join(links_text)
+
+    # Check email (visible or mailto link)
     has_email = bool(re.search(r'[\w.-]+@[\w.-]+\.\w+', text))
+    has_mailto = any('mailto:' in h for h in links_href)
+
+    # Check phone
     has_phone = bool(re.search(r'(\+44|0\d{3,4})[\s\-]?\d{3,4}[\s\-]?\d{3,4}', text))
-    has_address = 'address' in text or 'street' in text or 'postcode' in text
-    score = sum([has_email, has_phone, has_address])
+
+    # Check physical address
+    has_address = any(p in text for p in ['address','street','postcode','london','manchester','birmingham'])
+
+    # Check contact page link
+    has_contact_page = any(p in all_text for p in [
+        '/contact','contact us','get in touch',
+        'contact-us','support','help center','helpdesk'
+    ])
+
+    score = sum([has_email or has_mailto, has_phone, has_address, has_contact_page])
+
     if score >= 2:
         return {'id':'contact','title':'Contact information','status':'pass','detail':'Good contact information found.','points':10}
     elif score == 1:
-        return {'id':'contact','title':'Contact information','status':'warn','detail':'Only one contact method found.','points':5}
+        return {'id':'contact','title':'Contact information','status':'warn','detail':'Only one contact method found. Add more for trust.','points':5}
     return {'id':'contact','title':'Contact information','status':'fail','detail':'No contact information found.','points':0}
-
 
 def check_sentiment(soup):
     if soup is None:
