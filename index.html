@@ -119,6 +119,11 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
 </style>
 </head>
 <body>
+<div id="cookie-banner" style="position:fixed;bottom:0;left:0;right:0;background:#18181A;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;font-size:12px">
+  <p style="margin:0">We use cookies to improve your experience. By using TrustPulse you agree to our <a href="#" onclick="show('privacy')" style="color:var(--g)">cookie policy</a>.</p>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookies_accepted','true')" style="background:var(--g);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit">Accept</button>
+</div>
+<script>if(localStorage.getItem('cookies_accepted')==='true')document.getElementById('cookie-banner').style.display='none';</script>
 <nav>
   <a class="logo" onclick="show('landing')" href="#">
     <div class="lm">TP</div>
@@ -169,7 +174,55 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
 <!-- URGENCY CTA --> <div style="padding:1.5rem 1rem;text-align:center;background:var(--g)">   <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:4px">⚡ LIMITED BETA PRICING</div>   <h2 style="font-size:20px;font-weight:700;color:#fff;margin-bottom:6px">Lock in &pound;19/month forever</h2>   <p style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:1.25rem">Price goes up to &pound;49/month after beta. Early adopters keep &pound;19 forever.</p>   <button onclick="window.open('https://buy.stripe.com/aFa7sLaAc53Z1MH8tM1gs00','_blank')" style="background:#fff;color:var(--g);border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Upgrade to Pro &mdash; &pound;19/mo &rarr;</button>   <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:8px">Cancel anytime &middot; Secure payment via Stripe</div> </div>
 
 
-  <footer>Â© 2026 TrustPulse &middot; <a href="#" onclick="show('scanner')" style="color:var(--g);text-decoration:none">Try the scanner free â</a></footer>
+  <footer style="text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:0.5px solid rgba(24,24,26,0.08)">
+  <p style="margin-bottom:8px">&#xA9; 2026 TrustPulse &middot; Built in London, UK</p>
+  <p style="margin-bottom:8px">Contact: <a href="mailto:hello@trustpulse.ai" style="color:var(--g);text-decoration:none">hello@trustpulse.ai</a> &middot; 123 Digital Street, London, E1 6RF</p>
+  <p>
+    <a href="#" onclick="show('privacy')" style="color:var(--g);text-decoration:none">Privacy Policy</a> &middot;
+    <a href="#" onclick="show('refund')" style="color:var(--g);text-decoration:none">Refund Policy</a> &middot;
+    <a href="#" onclick="show('scanner')" style="color:var(--g);text-decoration:none">Try the scanner free &rarr;</a>
+  </p>
+</footer>
+</div>
+
+<!-- PRIVACY POLICY -->
+<div id="page-privacy" class="page">
+  <div class="scan-pg">
+    <div class="pg-h">Privacy Policy</div>
+    <div class="pg-s">Last updated: January 2026</div>
+    <div style="background:#fff;border:0.5px solid rgba(24,24,26,0.1);border-radius:12px;padding:1.25rem;font-size:13px;line-height:1.7;color:#5A5A60">
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">1. Who we are</h3>
+      <p style="margin-bottom:1rem">TrustPulse is a website trust scanning service based in London, UK. Contact us at hello@trustpulse.ai.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">2. What data we collect</h3>
+      <p style="margin-bottom:1rem">We collect your email address when you subscribe to Pro. We collect the URLs you submit for scanning. We use Google Analytics to understand how people use our site.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">3. How we use your data</h3>
+      <p style="margin-bottom:1rem">We use your email to send you your Pro access code and scan reports. We never sell your data to third parties.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">4. Cookies</h3>
+      <p style="margin-bottom:1rem">We use Google Analytics cookies to measure site traffic. You can decline these by not accepting our cookie banner.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">5. Your rights</h3>
+      <p style="margin-bottom:1rem">Under UK GDPR you have the right to access, correct, or delete your data. Email hello@trustpulse.ai to exercise these rights.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">6. Contact</h3>
+      <p>Email: hello@trustpulse.ai &middot; Address: 123 Digital Street, London, E1 6RF</p>
+    </div>
+    <button onclick="show('landing')" style="width:100%;margin-top:1rem;padding:10px;background:#F3F2EE;color:#18181A;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Back to home</button>
+  </div>
+</div>
+
+<!-- REFUND POLICY -->
+<div id="page-refund" class="page">
+  <div class="scan-pg">
+    <div class="pg-h">Refund Policy</div>
+    <div class="pg-s">Last updated: January 2026</div>
+    <div style="background:#fff;border:0.5px solid rgba(24,24,26,0.1);border-radius:12px;padding:1.25rem;font-size:13px;line-height:1.7;color:#5A5A60">
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">Pro Subscription</h3>
+      <p style="margin-bottom:1rem">You may cancel your Pro subscription at any time. No refunds are provided for the current billing period but you will not be charged again.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">One-time PDF Report</h3>
+      <p style="margin-bottom:1rem">If you are not satisfied with your PDF report, contact us within 14 days for a full refund. This is in line with UK consumer law.</p>
+      <h3 style="color:#18181A;font-size:14px;margin-bottom:8px">How to request a refund</h3>
+      <p>Email hello@trustpulse.ai with your order details and we will process your refund within 5 business days.</p>
+    </div>
+    <button onclick="show('landing')" style="width:100%;margin-top:1rem;padding:10px;background:#F3F2EE;color:#18181A;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Back to home</button>
+  </div>
 </div>
 
 <!-- PRICING -->
