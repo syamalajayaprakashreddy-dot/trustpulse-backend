@@ -44,9 +44,12 @@ def check_privacy_policy(soup):
     links_text = [a.get_text().lower() for a in soup.find_all('a')]
     links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
     all_text = text + ' '.join(links_text) + ' '.join(links_href)
-    if any(p in all_text for p in ['privacy policy','privacy notice','privacy-policy','/privacy']):
+    if any(p in all_text for p in [
+        'privacy policy', 'privacy notice', 'privacy-policy', '/privacy'
+    ]):
         return {'id':'privacy','title':'Privacy policy','status':'pass','detail':'Privacy policy link found.','points':10}
     return {'id':'privacy','title':'Privacy policy','status':'fail','detail':'No privacy policy found. Required under UK GDPR.','points':0}
+
 
 def check_dark_patterns(soup, html):
     if soup is None or html is None:
@@ -76,11 +79,8 @@ def check_cookie_consent(soup, html):
     if preticked:
         return {'id':'cookies','title':'Cookie consent','status':'fail','detail':f'{len(preticked)} pre-ticked checkbox(es) found. Violates GDPR.','points':0}
 
-    # Check visible text
     full_text = soup.get_text().lower()
-    # Check href links
     links_href = [a.get('href', '').lower() for a in soup.find_all('a')]
-    # Check raw HTML for JS cookie scripts
     html_lower = html.lower() if html else ''
 
     cookie_signals = [
@@ -101,6 +101,7 @@ def check_cookie_consent(soup, html):
         return {'id':'cookies','title':'Cookie consent','status':'pass','detail':'Cookie consent notice found.','points':10}
     return {'id':'cookies','title':'Cookie consent','status':'warn','detail':'No cookie consent notice detected.','points':5}
 
+
 def check_contact_info(soup):
     if soup is None:
         return {'id':'contact','title':'Contact information','status':'warn','detail':'Could not scan page.','points':5}
@@ -110,20 +111,16 @@ def check_contact_info(soup):
     links_text = [a.get_text().lower() for a in soup.find_all('a')]
     all_text = text + ' '.join(links_href) + ' '.join(links_text)
 
-    # Check email (visible or mailto link)
     has_email = bool(re.search(r'[\w.-]+@[\w.-]+\.\w+', text))
     has_mailto = any('mailto:' in h for h in links_href)
-
-    # Check phone
     has_phone = bool(re.search(r'(\+44|0\d{3,4})[\s\-]?\d{3,4}[\s\-]?\d{3,4}', text))
-
-    # Check physical address
-    has_address = any(p in text for p in ['address','street','postcode','london','manchester','birmingham'])
-
-    # Check contact page link
+    has_address = any(p in text for p in [
+        'address', 'street', 'postcode', 'london', 'manchester', 'birmingham',
+        'leeds', 'bristol', 'edinburgh', 'glasgow', 'sheffield'
+    ])
     has_contact_page = any(p in all_text for p in [
-        '/contact','contact us','get in touch',
-        'contact-us','support','help center','helpdesk'
+        '/contact', 'contact us', 'get in touch',
+        'contact-us', 'support', 'help center', 'helpdesk', 'help centre'
     ])
 
     score = sum([has_email or has_mailto, has_phone, has_address, has_contact_page])
@@ -133,6 +130,7 @@ def check_contact_info(soup):
     elif score == 1:
         return {'id':'contact','title':'Contact information','status':'warn','detail':'Only one contact method found. Add more for trust.','points':5}
     return {'id':'contact','title':'Contact information','status':'fail','detail':'No contact information found.','points':0}
+
 
 def check_sentiment(soup):
     if soup is None:
@@ -156,12 +154,13 @@ def check_returns_policy(soup):
     all_text = text + ' '.join(links_href)
 
     if any(p in all_text for p in [
-        'return policy','returns policy','refund policy',
-        'money back','30-day','14 day return',
-        '/returns','/refund','refund-policy','returns-policy'
+        'return policy', 'returns policy', 'refund policy',
+        'money back', '30-day', '14 day return',
+        '/returns', '/refund', 'refund-policy', 'returns-policy'
     ]):
         return {'id':'returns','title':'Returns policy','status':'pass','detail':'Returns policy found.','points':10}
     return {'id':'returns','title':'Returns policy','status':'fail','detail':'No returns policy found. Required by UK law.','points':0}
+
 
 def run_full_scan(url):
     if not url.startswith('http'):
