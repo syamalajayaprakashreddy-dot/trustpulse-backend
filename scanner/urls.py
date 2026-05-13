@@ -9,4 +9,5 @@ urlpatterns = [
     path('alerts/', views.save_email_alert, name='save_email_alert'),
     path('webhook/', webhook.stripe_webhook, name='stripe_webhook'),
     path('test-email/', views.test_email, name='test_email'),
+    path('api/debug/', views.debug_fetch),
 ]
