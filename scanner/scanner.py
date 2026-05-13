@@ -16,8 +16,13 @@ def fetch_page(url):
             'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
         }
-        resp = requests.get(url, timeout=15, headers=headers, allow_redirects=True)
+        import time
+        bust = f"?_={int(time.time())}"
+        fetch_url = url + bust if '?' not in url else url + f"&_={int(time.time())}"
+        resp = requests.get(fetch_url, timeout=15, headers=headers, allow_redirects=True)
         html = resp.text
         soup = BeautifulSoup(html, 'html.parser')
         return html, soup
