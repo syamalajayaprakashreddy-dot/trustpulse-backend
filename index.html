@@ -130,9 +130,9 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
     <span class="ln">TrustPulse</span>
   </a>
   <div class="nav-r">
-    <button class="nb" onclick="show('scanner')">Scan</button>
-    <button class="nb" onclick="show('dashboard')">Dashboard</button>
-    <button class="nb" onclick="window.open('https://trustpulse-competitor.vercel.app','_blank')">Compare</button>
+    <button class="nb" onclick="show('scanner')">🔍 Scan</button>
+    <button class="nb" onclick="show('dashboard')">📊 Dashboard</button>
+    <button class="nb" onclick="window.open('https://trustpulse-competitor.vercel.app','_blank')">⚡ Compare</button>
     <button class="nb p" onclick="window.open('https://buy.stripe.com/aFa7sLaAc53Z1MH8tM1gs00','_blank'">&#x26A1; Beta &mdash; &pound;19/mo</button>
   </div>
 </nav>
@@ -275,7 +275,7 @@ footer{text-align:center;padding:1.5rem;font-size:12px;color:#9B9BA0;border-top:
     <div class="scan-box">
       <div class="scan-row">
         <input type="text" id="scan-url" value="https://www.asos.com" placeholder="https://yoursite.com"/>
-        <button class="sbtn" id="sbtn" onclick="runScan()"><span id="si">ð Scan</span></button>
+        <button class="sbtn" id="sbtn" onclick="runScan()"><span id="si">🔍 Scan</span></button>
       </div>
       <div class="prog" id="prog">
         <div class="pb-bg"><div class="pb" id="pb"></div></div>
@@ -392,7 +392,7 @@ async function runScan(){
     clearInterval(iv);document.getElementById('pb').style.width='100%';document.getElementById('pl').textContent='Done!';
     scanData=getMock(url);
   }
-  btn.disabled=false;si.textContent='ð Scan again';
+  btn.disabled=false;si.textContent='🔍 Scan again';
   if(localStorage.getItem('tp_pro')==='true'){showProResults();}
   else{showFreeResults();}
 }
