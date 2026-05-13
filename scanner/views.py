@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .scanner import run_full_scan
+from .scanner import run_full_scan, fetch_page
 from .email_service import send_pdf_report_email
 
 
@@ -145,3 +145,11 @@ def test_email(request):
     if result:
         return Response({'status': 'Email sent! Check your Gmail inbox.'})
     return Response({'status': 'Email failed — check SendGrid key.'})
+
+@api_view(['POST'])
+def debug_fetch(request):
+    url = request.data.get('url', '')
+    html, soup = fetch_page(url)
+    if html:
+        return Response({'html_preview': html[:2000], 'length': len(html)})
+    return Response({'error': 'Could not fetch'})
