@@ -1,31 +1,51 @@
+"""
+trustpulse/settings.py — production-ready settings
+Push this to replace trustpulse/settings.py in your repo.
+"""
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'trustpulse-secret-key-2025'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-key-change-in-prod')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1',
+    'web-production-b87c1.up.railway.app',
+    os.environ.get('RAILWAY_PUBLIC_DOMAIN', ''),
+    os.environ.get('CUSTOM_DOMAIN', ''),
+]
 
 INSTALLED_APPS = [
-    'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.staticfiles',
+    'django.contrib.auth',
     'rest_framework',
     'corsheaders',
     'scanner',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',   # ← must be FIRST
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'trustpulse.urls'
+WSGI_APPLICATION = 'trustpulse.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# ─── CORS ─────────────────────────────────────────────────────────────────────
+# Allows the frontend (wherever hosted) to call the API.
+CORS_ALLOW_ALL_ORIGINS = True          # open during beta — restrict after launch
+CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_HEADERS = [
+    'accept', 'accept-encoding', 'authorization',
+    'content-type', 'dnt', 'origin', 'user-agent', 'x-requested-with',
+]
 
+# ─── Database ────────────────────────────────────────────────────────────────
+# SQLite for now; swap for postgres via DATABASE_URL on Railway
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -33,12 +53,27 @@ DATABASES = {
     }
 }
 
-STATIC_URL = '/static/'
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ]
+# ─── Cache ───────────────────────────────────────────────────────────────────
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'TIMEOUT': 60 * 60 * 24,   # 24 hours
+    }
 }
+
+# ─── Stripe ───────────────────────────────────────────────────────────────────
+STRIPE_SECRET_KEY      = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET  = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_PRO_PRICE_ID    = os.environ.get('STRIPE_PRO_PRICE_ID', '')
+
+# ─── SendGrid ────────────────────────────────────────────────────────────────
+SENDGRID_API_KEY       = os.environ.get('SENDGRID_API_KEY', '')
+FROM_EMAIL             = os.environ.get('FROM_EMAIL', 'hello@trustpulse.ai')
+
+# ─── Misc ─────────────────────────────────────────────────────────────────────
+LANGUAGE_CODE   = 'en-gb'
+TIME_ZONE       = 'Europe/London'
+USE_I18N        = True
+USE_TZ          = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATIC_URL = '/static/'
