@@ -23,7 +23,31 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'scanner',
+    'rest_framework_simplejwt',
+    'social_django',
+    'django.contrib.sessions',
 ]
+
+# ---- JWT Auth ----
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',   # ← must be FIRST

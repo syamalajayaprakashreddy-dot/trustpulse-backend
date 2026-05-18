@@ -7,4 +7,6 @@ textblob>=0.17
 python-whois>=0.8
 gunicorn>=21.0
 stripe>=5.0.0
-sendgrid>=6.9.0
+sendgrid>=6.9.0djangorestframework-simplejwt>=5.3
+social-auth-app-django>=5.4
+django-allauth>=0.57
