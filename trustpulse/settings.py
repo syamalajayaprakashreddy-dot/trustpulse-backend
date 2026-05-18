@@ -13,6 +13,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'localhost', '127.0.0.1',
     'web-production-b87c1.up.railway.app',
+    'web-production-4592c.up.railway.app',
     os.environ.get('RAILWAY_PUBLIC_DOMAIN', ''),
     os.environ.get('CUSTOM_DOMAIN', ''),
 ]
@@ -61,7 +62,8 @@ WSGI_APPLICATION = 'trustpulse.wsgi.application'
 
 # ─── CORS ─────────────────────────────────────────────────────────────────────
 # Allows the frontend (wherever hosted) to call the API.
-CORS_ALLOW_ALL_ORIGINS = True          # open during beta — restrict after launch
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ["https://trustpulse-frontend.vercel.app"]          # open during beta — restrict after launch
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = [
     'accept', 'accept-encoding', 'authorization',
