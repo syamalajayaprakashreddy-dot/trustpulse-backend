@@ -33,12 +33,13 @@ def google_auth(request):
     if not credential:
         return Response({'error': 'credential is required'}, status=400)
     try:
-        resp = http_requests.get('https://oauth2.googleapis.com/tokeninfo', params={'id_token': credential}, timeout=10)
-        if resp.status_code != 200:
-            return Response({'error': 'Invalid Google token'}, status=401)
-        payload = resp.json()
-    except Exception:
-        return Response({'error': 'Could not verify Google token'}, status=500)
+        from google.oauth2 import id_token
+        from google.auth.transport import requests as google_requests
+        import os
+        client_id = os.environ.get('GOOGLE_CLIENT_ID', '')
+        payload = id_token.verify_oauth2_token(credential, google_requests.Request(), client_id)
+    except Exception as e:
+        return Response({'error': f'Token verification failed: {str(e)}'}, status=401)
     email = payload.get('email')
     name = payload.get('name', '')
     first_name = payload.get('given_name', name.split()[0] if name else '')
