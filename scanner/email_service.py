@@ -201,14 +201,7 @@ def send_scan_complete_email(user, url, result):
         'personalizations': [{'to': [{'email': user.email}]}],
         'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
         'subject': f'TrustPulse Scan - {url} scored {score}/100',
-        'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},
-
-Your scan for {url} is complete!
-
-Trust Score: {score}/100 ({label})
-
-View your full report:
-https://trustpulse-frontend.vercel.app
+        'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\nTrust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app
 
 - TrustPulse'}]
     }
