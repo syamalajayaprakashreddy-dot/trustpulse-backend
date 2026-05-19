@@ -117,3 +117,40 @@ def send_pdf_report_email(customer_email, scan_data, stripe_session_id=None):
         'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\nTrust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app\n\n- TrustPulse'}]
     }
     requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
+
+
+def send_pro_access_email(user):
+    import os, requests
+    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+    if not sendgrid_key:
+        return
+    payload = {
+        'personalizations': [{'to': [{'email': user.email}]}],
+        'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
+        'subject': 'Your TrustPulse Pro Access is Ready!',
+        'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour Pro access has been activated!\n\nVisit https://trustpulse-frontend.vercel.app to get started.\n\n- TrustPulse'}]
+    }
+    requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
+
+
+def send_scan_complete_email(user, url, result):
+    import os, requests
+    if not user.email:
+        return
+    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+    if not sendgrid_key:
+        return
+    score = result.get('score', 0) or result.get('trust_score', 0)
+    if score >= 70:
+        label = 'Good'
+    elif score >= 40:
+        label = 'Moderate'
+    else:
+        label = 'Poor'
+    payload = {
+        'personalizations': [{'to': [{'email': user.email}]}],
+        'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
+        'subject': f'TrustPulse Scan - {url} scored {score}/100',
+        'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\nTrust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app\n\n- TrustPulse'}]
+    }
+    requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
