@@ -181,24 +181,35 @@ def send_pro_access_email(customer_email):
 
 
 def send_scan_complete_email(user, url, result):
-    from django.core.mail import send_mail
-    from django.conf import settings
+    import os, requests
     if not user.email:
         return
     score = result.get('score', 0) or result.get('trust_score', 0)
     if score >= 70:
-        icon = '✅'
+        icon = 'Good'
         label = 'Good'
     elif score >= 40:
-        icon = '⚠️'
+        icon = 'Warning'
         label = 'Moderate'
     else:
-        icon = '❌'
+        icon = 'Poor'
         label = 'Poor'
-    send_mail(
-        subject=f'{icon} TrustPulse Scan — {url} scored {score}/100',
-        message=f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\n{icon} Trust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app\n\n— TrustPulse',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=False,
-    )
+    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
+    if not sendgrid_key:
+        return
+    payload = {
+        'personalizations': [{'to': [{'email': user.email}]}],
+        'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
+        'subject': f'TrustPulse Scan - {url} scored {score}/100',
+        'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},
+
+Your scan for {url} is complete!
+
+Trust Score: {score}/100 ({label})
+
+View your full report:
+https://trustpulse-frontend.vercel.app
+
+- TrustPulse'}]
+    }
+    requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
