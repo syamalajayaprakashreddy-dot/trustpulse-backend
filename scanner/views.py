@@ -33,11 +33,11 @@ def scan_website(request):
         result = run_full_scan(url)
         result["cached"] = False
         try:
-            from .email_service import send_scan_complete_email
+            from .email_service import send_scan_complete_email, send_pro_access_email
             from django.contrib.auth.models import User
-            if True:  # send email always
-            user = User.objects.filter(email='syamalajayaprakashreddy@gmail.com').first()
-            send_scan_complete_email(user, url, result) 
+            u = User.objects.filter(email="syamalajayaprakashreddy@gmail.com").first()
+            if u:
+                send_scan_complete_email(u, url, result)
         except Exception as email_err:
             print(f"EMAIL ERROR: {email_err}")
         cache.set(cache_key, result, 60 * 60 * 24)
