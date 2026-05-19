@@ -35,7 +35,7 @@ def scan_website(request):
         try:
             from .email_service import send_scan_complete_email
             from django.contrib.auth.models import User
-            if request.user.is_authenticated:
+            if True:  # send email always
                 send_scan_complete_email(request.user, url, result)
         except Exception as email_err:
             print(f"EMAIL ERROR: {email_err}")
