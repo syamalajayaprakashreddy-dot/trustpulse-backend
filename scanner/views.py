@@ -38,7 +38,6 @@ def scan_website(request):
             if True:  # send email always
             user = User.objects.filter(email='syamalajayaprakashreddy@gmail.com').first()
             send_scan_complete_email(user, url, result) 
-url, result)
         except Exception as email_err:
             print(f"EMAIL ERROR: {email_err}")
         cache.set(cache_key, result, 60 * 60 * 24)
