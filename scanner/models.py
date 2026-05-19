@@ -14,3 +14,17 @@ class ScanHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.email} — {self.url} ({self.score})"
+
+
+class ProUser(models.Model):
+    """Tracks which users have active Pro subscriptions."""
+    user             = models.OneToOneField(User, on_delete=models.CASCADE, related_name='pro')
+    stripe_customer  = models.CharField(max_length=100, blank=True)
+    stripe_sub_id    = models.CharField(max_length=100, blank=True)
+    is_active        = models.BooleanField(default=True)
+    plan             = models.CharField(max_length=20, default='pro')
+    created_at       = models.DateTimeField(auto_now_add=True)
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.email} — {'Active' if self.is_active else 'Cancelled'}"
