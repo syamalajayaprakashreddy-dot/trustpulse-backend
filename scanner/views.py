@@ -31,7 +31,14 @@ def scan_website(request):
             cached['cached'] = True
             return Response(cached)
         result = run_full_scan(url)
-        result['cached'] = False
+        result["cached"] = False
+        try:
+            from .emails import send_scan_complete_email
+            from django.contrib.auth.models import User
+            if request.user.is_authenticated:
+                send_scan_complete_email(request.user, url, result)
+        except Exception:
+            pass
         cache.set(cache_key, result, 60 * 60 * 24)
         return Response(result)
     except Exception as e:
