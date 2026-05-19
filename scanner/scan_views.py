@@ -33,14 +33,12 @@ def google_auth(request):
     if not credential:
         return Response({'error': 'credential is required'}, status=400)
     try:
-        import base64, json
-        parts = credential.split('.')
-        if len(parts) != 3:
-            return Response({'error': 'Invalid Google token format'}, status=401)
-        padded = parts[1] + '=' * (4 - len(parts[1]) % 4)
-        payload = json.loads(base64.urlsafe_b64decode(padded).decode('utf-8'))
-    except Exception as e:
-        return Response({'error': f'Token decode failed: {str(e)}'}, status=500)
+        resp = http_requests.get('https://oauth2.googleapis.com/tokeninfo', params={'id_token': credential}, timeout=10)
+        if resp.status_code != 200:
+            return Response({'error': 'Invalid Google token'}, status=401)
+        payload = resp.json()
+    except Exception:
+        return Response({'error': 'Could not verify Google token'}, status=500)
     email = payload.get('email')
     name = payload.get('name', '')
     first_name = payload.get('given_name', name.split()[0] if name else '')
