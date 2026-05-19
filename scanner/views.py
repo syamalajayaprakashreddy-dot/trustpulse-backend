@@ -35,9 +35,8 @@ def scan_website(request):
         try:
             from .email_service import send_scan_complete_email, send_pro_access_email
             from django.contrib.auth.models import User
-            u = User.objects.filter(email="syamalajayaprakashreddy@gmail.com").first()
-            if u:
-                send_scan_complete_email(u, url, result)
+            if request.user.is_authenticated:
+                send_scan_complete_email(request.user, url, result)
         except Exception as email_err:
             print(f"EMAIL ERROR: {email_err}")
         cache.set(cache_key, result, 60 * 60 * 24)
