@@ -35,6 +35,7 @@ def scan_website(request):
         try:
             from .email_service import send_scan_complete_email, send_pro_access_email
             from django.contrib.auth.models import User
+        print(f"AUTH CHECK: user={request.user} authenticated={request.user.is_authenticated}")
             if request.user.is_authenticated:
                 send_scan_complete_email(request.user, url, result)
         except Exception as email_err:
@@ -109,3 +110,4 @@ def health_check(request):
 def test_email(request):
     result = send_pro_access_email('test@example.com', 'TRUST2025')
     return Response({'status': 'sent' if result else 'failed'})
+# DEBUG
