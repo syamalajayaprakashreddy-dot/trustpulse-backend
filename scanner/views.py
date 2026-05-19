@@ -14,7 +14,7 @@ from django.core.cache import cache
 
 from .scanner import run_full_scan, fetch_page
 from .email_service import send_pdf_report_email, send_pro_access_email
-from .webhook import validate_access_code
+from .webhook_email import validate_access_code
 
 
 @api_view(['POST'])
