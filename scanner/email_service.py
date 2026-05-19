@@ -202,7 +202,6 @@ def send_scan_complete_email(user, url, result):
         'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
         'subject': f'TrustPulse Scan - {url} scored {score}/100',
         'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\nTrust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app\n\n- TrustPulse'}]
-
-- TrustPulse'}]
+\n\n- TrustPulse'}]
     }
     requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
