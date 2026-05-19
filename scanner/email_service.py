@@ -111,97 +111,9 @@ def send_pdf_report_email(customer_email, scan_data, stripe_session_id=None):
 
     # Send via SendGrid API
     payload = {
-        "personalizations": [{"to": [{"email": customer_email}]}],
-        "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
-        "subject": f"Your TrustPulse Report — Score: {score}/100 ({grade})",
-        "content": [{"type": "text/html", "value": html_content}]
-    }
-
-    response = requests.post(
-        "https://api.sendgrid.com/v3/mail/send",
-        headers={
-            "Authorization": f"Bearer {sendgrid_key}",
-            "Content-Type": "application/json"
-        },
-        json=payload,
-        timeout=10
-    )
-
-    return response.status_code in (200, 202)
-
-
-def send_pro_access_email(customer_email):
-    """Send Pro access code to new subscriber."""
-    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
-    if not sendgrid_key:
-        print(f"Would send Pro access code to {customer_email}")
-        return False
-
-    html_content = """
-    <div style="font-family:-apple-system,sans-serif;max-width:500px;margin:0 auto;padding:20px">
-        <div style="background:#1D9E75;padding:20px;border-radius:12px;text-align:center;margin-bottom:20px">
-            <h1 style="color:#fff;margin:0">🛡️ Welcome to TrustPulse Pro!</h1>
-        </div>
-        <p>Thanks for upgrading! Here's your Pro access code:</p>
-        <div style="background:#F3F2EE;border-radius:12px;padding:20px;text-align:center;margin:16px 0">
-            <div style="font-size:28px;font-weight:700;color:#1D9E75;letter-spacing:4px">TRUST2025</div>
-            <p style="font-size:12px;color:#5A5A60;margin:8px 0 0">Enter this code on the scanner page to unlock full access</p>
-        </div>
-        <p style="font-size:13px;color:#5A5A60">
-            Visit <a href="https://trustpulse-backend.vercel.app" style="color:#1D9E75">trustpulse-backend.vercel.app</a>,
-            scan any website, and enter your code to unlock the full report.
-        </p>
-        <p style="font-size:12px;color:#9B9BA0;margin-top:20px">
-            Questions? Reply to this email. We're here to help!
-        </p>
-    </div>
-    """
-
-    payload = {
-        "personalizations": [{"to": [{"email": customer_email}]}],
-        "from": {"email": "syamalajayaprakashreddy@gmail.com", "name": "TrustPulse"},
-        "subject": "Welcome to TrustPulse Pro — Your Access Code Inside 🛡️",
-        "content": [
-    {"type": "text/plain", "value": "Welcome to TrustPulse Pro!\n\nYour access code is: TRUST2025\n\nVisit trustpulse-backend.vercel.app to use it.\n\nQuestions? Reply to this email."},
-    {"type": "text/html", "value": html_content}
-]
-    }
-
-    response = requests.post(
-        "https://api.sendgrid.com/v3/mail/send",
-        headers={
-            "Authorization": f"Bearer {sendgrid_key}",
-            "Content-Type": "application/json"
-        },
-        json=payload,
-        timeout=10
-    )
-
-    return response.status_code in (200, 202)
-
-
-def send_scan_complete_email(user, url, result):
-    import os, requests
-    if not user.email:
-        return
-    score = result.get('score', 0) or result.get('trust_score', 0)
-    if score >= 70:
-        icon = 'Good'
-        label = 'Good'
-    elif score >= 40:
-        icon = 'Warning'
-        label = 'Moderate'
-    else:
-        icon = 'Poor'
-        label = 'Poor'
-    sendgrid_key = os.environ.get('SENDGRID_API_KEY', '')
-    if not sendgrid_key:
-        return
-    payload = {
         'personalizations': [{'to': [{'email': user.email}]}],
         'from': {'email': os.environ.get('DEFAULT_FROM_EMAIL', 'syamalajayaprakashreddy@gmail.com'), 'name': 'TrustPulse'},
         'subject': f'TrustPulse Scan - {url} scored {score}/100',
         'content': [{'type': 'text/plain', 'value': f'Hi {user.first_name or user.username},\n\nYour scan for {url} is complete!\n\nTrust Score: {score}/100 ({label})\n\nView your full report:\nhttps://trustpulse-frontend.vercel.app\n\n- TrustPulse'}]
-\n\n- TrustPulse'}]
     }
     requests.post('https://api.sendgrid.com/v3/mail/send', headers={'Authorization': f'Bearer {sendgrid_key}', 'Content-Type': 'application/json'}, json=payload, timeout=10)
