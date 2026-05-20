@@ -50,6 +50,3 @@ def scan_history(request):
 
 
 from django.http import JsonResponse
-
-def scan_history(request):
-    return JsonResponse({'scans': []})
