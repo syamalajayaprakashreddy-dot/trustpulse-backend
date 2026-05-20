@@ -59,7 +59,7 @@ def check_dark_patterns(soup, html):
                 'detail': 'Could not scan page.', 'points': 5}
     issues_found = []
     text = soup.get_text().lower()
-    urgency_phrases = ['only \d+ left', 'limited time', 'expires in', 'hurry',
+    urgency_phrases = ['only \\d+ left', 'limited time', 'expires in', 'hurry',
                        'selling fast', 'last chance', 'today only', 'offer ends',
                        'flash sale', 'almost gone', 'low stock']
     for phrase in urgency_phrases:
