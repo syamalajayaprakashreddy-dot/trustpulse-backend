@@ -22,7 +22,7 @@ def google_auth(request):
         return Response({'error': 'credential is required'}, status=400)
     client_id = os.environ.get('GOOGLE_CLIENT_ID', '')
     try:
-        idinfo = id_token.verify_oauth2_token(credential, google_requests.Request(), client_id, clock_skew_in_seconds=10)
+        idinfo = id_token.verify_oauth2_token(credential, google_requests.Request(), client_id)
     except ValueError as e:
         return Response({'error': f'Invalid Google token: {str(e)}'}, status=401)
     except Exception as e:
