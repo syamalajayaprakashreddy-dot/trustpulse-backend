@@ -47,3 +47,9 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def scan_history(request):
     return JsonResponse({'scans': [], 'message': 'Scan history endpoint'})
+
+
+from django.http import JsonResponse
+
+def scan_history(request):
+    return JsonResponse({'scans': []})
