@@ -36,3 +36,24 @@ class UserProfileView(APIView):
             'name':   user.first_name,
             'is_pro': is_pro,
         })
+
+
+from django.contrib.auth import authenticate
+
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        if not email or not password:
+            return Response({'error': 'Email and password required'}, status=400)
+        user = authenticate(username=email, password=password)
+        if not user:
+            return Response({'error': 'Invalid credentials'}, status=401)
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {'email': user.email, 'name': user.first_name}
+        })
