@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .webhook import stripe_webhook
-from .scan_views import scan_history, google_auth
+from .scan_views import scan_history
 
 urlpatterns = [
     # existing
