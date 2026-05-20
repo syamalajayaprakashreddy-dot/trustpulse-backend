@@ -39,3 +39,11 @@ def google_auth(request):
         user.save()
     refresh = RefreshToken.for_user(user)
     return Response({'access': str(refresh.access_token), 'refresh': str(refresh), 'user': {'email': email, 'name': first_name or email}})
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def scan_history(request):
+    return JsonResponse({'scans': [], 'message': 'Scan history endpoint'})
