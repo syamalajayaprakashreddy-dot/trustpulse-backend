@@ -1,0 +1,9 @@
+{
+  "jobs": [
+    {
+      "name": "check-alerts",
+      "schedule": "0 9 * * *",
+      "command": "curl -X POST https://web-production-b87c1.up.railway.app/api/check-alerts/"
+    }
+  ]
+}

@@ -109,3 +109,57 @@ def health_check(request):
 def test_email(request):
     result = send_pro_access_email('test@example.com', 'TRUST2025')
     return Response({'status': 'sent' if result else 'failed'})
+
+
+@api_view(['POST'])
+def check_alerts(request):
+    """Called by a cron job to check all alerts and send emails"""
+    import json, os
+    from .scanner import run_scan
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+
+    alerts_file = 'alerts.json'
+    if not os.path.exists(alerts_file):
+        return Response({'message': 'No alerts'})
+
+    with open(alerts_file, 'r') as f:
+        alerts = json.load(f)
+
+    sent = 0
+    for alert in alerts:
+        if not alert.get('active'):
+            continue
+        try:
+            result = run_scan(alert['url'])
+            score = result.get('trust_score', 0)
+            threshold = alert.get('threshold', 70)
+            prev_score = alert.get('last_score', score)
+
+            if score != prev_score:
+                # Score changed — send alert email
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                direction = '📈 improved' if score > prev_score else '📉 dropped'
+                message = Mail(
+                    from_email=os.environ.get('FROM_EMAIL', 'hello@trustpulse.ai'),
+                    to_emails=alert['email'],
+                    subject=f'TrustPulse Alert: {alert["url"]} score {direction}',
+                    html_content=f'''
+                    <h2>Trust Score Alert</h2>
+                    <p>The trust score for <strong>{alert["url"]}</strong> has changed:</p>
+                    <p>Previous score: <strong>{prev_score}</strong></p>
+                    <p>New score: <strong>{score}</strong></p>
+                    <p>Status: Score {direction}</p>
+                    <a href="https://trustpulse-frontend.vercel.app">View full report</a>
+                    '''
+                )
+                sg.send(message)
+                alert['last_score'] = score
+                sent += 1
+        except Exception as e:
+            continue
+
+    with open(alerts_file, 'w') as f:
+        json.dump(alerts, f)
+
+    return Response({'message': f'Checked {len(alerts)} alerts, sent {sent} emails'})
