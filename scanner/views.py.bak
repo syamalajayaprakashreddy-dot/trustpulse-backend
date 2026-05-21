@@ -32,28 +32,13 @@ def scan_website(request):
             return Response(cached)
         result = run_full_scan(url)
         result["cached"] = False
-
-        # ── Save to ScanHistory DB ──────────────────────────────────────────
-        if request.user.is_authenticated:
-            try:
-                from .models import ScanHistory
-                ScanHistory.objects.create(
-                    user=request.user,
-                    url=url,
-                    score=result.get('trust_score') or result.get('score') or 0,
-                    grade=result.get('grade', ''),
-                )
-            except Exception as db_err:
-                print(f"DB SAVE ERROR: {db_err}")
-
-        # ── Send email notification ─────────────────────────────────────────
         try:
             from .email_service import send_scan_complete_email, send_pro_access_email
+            from django.contrib.auth.models import User
             if request.user.is_authenticated:
                 send_scan_complete_email(request.user, url, result)
         except Exception as email_err:
             print(f"EMAIL ERROR: {email_err}")
-
         cache.set(cache_key, result, 60 * 60 * 24)
         return Response(result)
     except Exception as e:
