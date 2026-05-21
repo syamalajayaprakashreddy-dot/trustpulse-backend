@@ -126,3 +126,16 @@ def forgot_password(request):
         return JsonResponse({'message': 'Reset link sent!'})
     except User.DoesNotExist:
         return JsonResponse({'error': 'Email not found'}, status=404)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_scan(request):
+    from .models import ScanHistory
+    scan_id = request.data.get('id')
+    try:
+        scan = ScanHistory.objects.get(id=scan_id, user=request.user)
+        scan.delete()
+        return JsonResponse({'deleted': True})
+    except ScanHistory.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)
