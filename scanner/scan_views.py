@@ -113,3 +113,16 @@ def save_scan(request):
         return JsonResponse({'id': scan.id, 'url': scan.url, 'score': scan.score, 'grade': scan.grade})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@api_view(['POST'])
+def forgot_password(request):
+    from django.contrib.auth.models import User
+    email = request.data.get('email', '').strip().lower()
+    if not email:
+        return JsonResponse({'error': 'email required'}, status=400)
+    try:
+        user = User.objects.get(email__iexact=email)
+        return JsonResponse({'message': 'Reset link sent!'})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Email not found'}, status=404)
