@@ -57,3 +57,29 @@ class LoginView(APIView):
             'refresh': str(refresh),
             'user': {'email': user.email, 'name': user.first_name}
         })
+
+
+class UpdateProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        name = request.data.get('name')
+        if name:
+            user.first_name = name
+            user.save()
+        return Response({'email': user.email, 'name': user.first_name})
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        if not user.check_password(old_password):
+            return Response({'error': 'Current password is incorrect'}, status=400)
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'})

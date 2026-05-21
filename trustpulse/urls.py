@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from scanner.auth_views import RegisterView, UserProfileView
+from scanner.auth_views import RegisterView, UserProfileView, UpdateProfileView, ChangePasswordView
 from scanner.scan_views import google_auth
 
 urlpatterns = [
