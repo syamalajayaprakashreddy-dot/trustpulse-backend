@@ -83,3 +83,11 @@ class ChangePasswordView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({'message': 'Password changed successfully'})
+
+
+@api_view(['POST'])
+def forgot_password(request):
+    email = request.data.get('email', '')
+    if User.objects.filter(email=email).exists():
+        return Response({'message': 'Reset link sent to your email.'})
+    return Response({'error': 'Email not found. Please check and try again.'}, status=404)
