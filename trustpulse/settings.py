@@ -119,3 +119,9 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'hello@trustpulse.ai')
 
 # Fix Google OAuth popup
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
