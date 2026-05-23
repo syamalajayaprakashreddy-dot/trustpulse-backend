@@ -28,3 +28,13 @@ class ProUser(models.Model):
 
     def __str__(self):
         return f"{self.user.email} — {'Active' if self.is_active else 'Cancelled'}"
+
+class AccessCode(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    plan = models.CharField(max_length=20, default='pro')
+    is_active = models.BooleanField(default=True)
+    used_by = models.EmailField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.code
