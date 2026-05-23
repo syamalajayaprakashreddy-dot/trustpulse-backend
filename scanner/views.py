@@ -188,7 +188,7 @@ def ai_fix_recommendations(request):
     prompt = data.get('prompt', '')
     client = anthropic.Anthropic()
     msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=1000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -203,7 +203,7 @@ def ai_fix_recommendations(request):
     prompt = data.get('prompt', '')
     client = anthropic.Anthropic()
     msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=1000,
         messages=[{"role": "user", "content": prompt}]
     )
