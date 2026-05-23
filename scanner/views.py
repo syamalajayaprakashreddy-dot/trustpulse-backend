@@ -184,6 +184,7 @@ def ai_fix_recommendations(request):
         return JsonResponse({'error': 'POST only'}, status=405)
     try:
         import anthropic, json as j, os
+        from django.http import JsonResponse
         data = j.loads(request.body)
         prompt = data.get('prompt', '')
         api_key = os.environ.get('ANTHROPIC_API_KEY', '')
