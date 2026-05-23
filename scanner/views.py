@@ -77,7 +77,7 @@ def validate_code(request):
         return Response({'valid': False, 'error': 'No code provided.'}, status=400)
     record = validate_access_code(code)
     if record:
-        return Response({'valid': True, 'plan': record.get('plan', 'pro')})
+        return Response({'valid': True, 'plan': record.plan})
     return Response({'valid': False, 'error': 'Invalid or inactive code.'}, status=401)
 
 
