@@ -179,7 +179,6 @@ def check_alerts(request):
 
     return Response({'message': f'Checked {len(alerts)} alerts, sent {sent} emails'})
 
-@csrf_exempt
 def ai_fix_recommendations(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST only'}, status=405)
@@ -208,3 +207,22 @@ def ai_fix_recommendations(request):
         messages=[{"role": "user", "content": prompt}]
     )
     return JsonResponse({'content': [{'text': msg.content[0].text}]})
+
+@csrf_exempt
+def ai_fix_recommendations(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST only'}, status=405)
+    try:
+        import anthropic, json as j, os
+        data = j.loads(request.body)
+        prompt = data.get('prompt', '')
+        api_key = os.environ.get('ANTHROPIC_API_KEY', '')
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return JsonResponse({'content': [{'text': msg.content[0].text}]})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
