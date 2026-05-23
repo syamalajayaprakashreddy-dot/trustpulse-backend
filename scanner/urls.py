@@ -18,4 +18,5 @@ urlpatterns = [
     # ✅ NEW: scan history    path("auth/login/",             LoginView.as_view(),            name="login"),
     path("scans/",            scan_history,               name="scan_history"),
     path("ai-fix/", views.ai_fix_recommendations, name="ai-fix"),
+    path("create-code/", views.create_code, name="create-code"),
 ]

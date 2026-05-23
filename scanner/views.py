@@ -202,3 +202,15 @@ def ai_fix_recommendations(request):
         return JsonResponse({'content': [{'text': msg.content[0].text}]})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def create_code(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST only'}, status=405)
+    import json as j
+    data = j.loads(request.body)
+    code = data.get('code')
+    plan = data.get('plan', 'pro')
+    from scanner.models import AccessCode
+    obj, created = AccessCode.objects.get_or_create(code=code, defaults={'plan': plan, 'is_active': True})
+    return JsonResponse({'created': created, 'code': code})
