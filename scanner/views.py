@@ -14,7 +14,12 @@ from django.core.cache import cache
 
 from .scanner import run_full_scan, fetch_page
 from .email_service import send_pdf_report_email, send_pro_access_email
-from .webhook_email import validate_access_code
+def validate_access_code(code):
+    from scanner.models import AccessCode
+    try:
+        return AccessCode.objects.get(code=code, is_active=True)
+    except AccessCode.DoesNotExist:
+        return None
 
 
 @api_view(['POST'])
