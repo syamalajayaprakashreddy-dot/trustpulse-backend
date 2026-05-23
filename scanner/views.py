@@ -178,3 +178,18 @@ def check_alerts(request):
         json.dump(alerts, f)
 
     return Response({'message': f'Checked {len(alerts)} alerts, sent {sent} emails'})
+
+@csrf_exempt
+def ai_fix_recommendations(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST only'}, status=405)
+    import anthropic, json as j
+    data = j.loads(request.body)
+    prompt = data.get('prompt', '')
+    client = anthropic.Anthropic()
+    msg = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return JsonResponse({'content': [{'text': msg.content[0].text}]})
