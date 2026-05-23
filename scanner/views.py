@@ -183,10 +183,10 @@ def check_alerts(request):
 def ai_fix_recommendations(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST only'}, status=405)
-    import anthropic, json as j
+    import anthropic, json as j, os
     data = j.loads(request.body)
     prompt = data.get('prompt', '')
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
     msg = client.messages.create(
         model="claude-sonnet-4-5",
         max_tokens=1000,
@@ -198,10 +198,10 @@ def ai_fix_recommendations(request):
 def ai_fix_recommendations(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST only'}, status=405)
-    import anthropic, json as j
+    import anthropic, json as j, os
     data = j.loads(request.body)
     prompt = data.get('prompt', '')
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
     msg = client.messages.create(
         model="claude-sonnet-4-5",
         max_tokens=1000,
