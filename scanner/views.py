@@ -191,6 +191,17 @@ def ai_fix_recommendations(request):
         import anthropic, json as j, os
         from django.http import JsonResponse
         data = j.loads(request.body)
+
+        # Pro gate
+        code = data.get('code', '').strip().upper()
+        if not code:
+            return JsonResponse({'error': 'Pro access required.'}, status=403)
+        from scanner.models import AccessCode
+        try:
+            AccessCode.objects.get(code=code, is_active=True)
+        except AccessCode.DoesNotExist:
+            return JsonResponse({'error': 'Invalid or inactive Pro code.'}, status=403)
+
         prompt = data.get('prompt', '')
         api_key = os.environ.get('ANTHROPIC_API_KEY', '')
         client = anthropic.Anthropic(api_key=api_key)
